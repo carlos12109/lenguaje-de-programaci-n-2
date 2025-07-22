@@ -1,0 +1,18 @@
+Reporte en archivo de texto :
+
+--- AUTOS ---
+Auto - Marca: Chevrolet, Modelo: Onix, Pasajeros: 5
+Auto - Marca: Honda, Modelo: Civic, Pasajeros: 4
+Auto - Marca: Toyota, Modelo: Corolla, Pasajeros: 5
+
+--- CAMIONES ---
+Camion - Marca: MAN, Modelo: TGX, Carga Máx: 20000 kg
+Camion - Marca: Mercedes-Benz, Modelo: Actros, Carga Máx: 18000 kg
+Camion - Marca: Scania, Modelo: R500, Carga Máx: 30000 kg
+Camion - Marca: Volvo, Modelo: FH16, Carga Máx: 25000 kg
+
+--- MOTOS ---
+Moto - Marca: Honda, Modelo: CBR600RR, Tipo: Sport
+Moto - Marca: Kawasaki, Modelo: Ninja, Tipo: Sport
+Moto - Marca: Suzuki, Modelo: GSX-R, Tipo: Deportiva
+Moto - Marca: Yamaha, Modelo: FZ, Tipo: Deportiva
