@@ -1,0 +1,113 @@
+#CALCULADORA DE AREA Y PERIMETRO DE FIGURAS
+#el usuario elije una figura (cuadrado, triangulo, circulo, etc ) e ingresar las medidas para obtener resultados
+
+#herencia
+import math
+
+# Clase base
+class Figura:
+    def __init__(self, tipo):
+        self.__tipo = tipo  # Encapsulado
+
+    def mostrar_info(self):
+        print(f"\nFIGURA ELEGIDA: {self.__tipo}")
+
+    def __del__(self):
+        print(f"Destruyendo figura: {self.__tipo}")
+
+# Cuadrado
+class Cuadrado(Figura):#herencia de la clase figura
+    def __init__(self, lado):
+        super().__init__("Cuadrado")
+        self.__lado = lado  # Encapsulado
+
+    def calcular_area(self):
+        return self.__lado ** 2
+
+    def calcular_perimetro(self):
+        return 4 * self.__lado
+
+# Rectángulo
+class Rectangulo(Figura):#herencia de la clase figura
+    def __init__(self, base, altura):
+        super().__init__("Rectángulo")
+        self.__base = base# Encapsulado
+        self.__altura = altura# Encapsulado
+
+    def calcular_area(self):
+        return self.__base * self.__altura
+
+    def calcular_perimetro(self):
+        return 2 * (self.__base + self.__altura)
+
+# Triángulo (isosceles)
+class Triangulo(Figura):#herencia de la clase figura
+    def __init__(self, base, altura):
+        super().__init__("Triángulo")
+        self.__base = base# Encapsulado
+        self.__altura = altura# Encapsulado
+
+    def calcular_area(self):
+        return (self.__base * self.__altura) / 2
+
+    def calcular_perimetro(self):
+        lado = math.sqrt((self.__base / 2) ** 2 + self.__altura ** 2)
+        return self.__base + 2 * lado
+
+# Círculo
+class Circulo(Figura):#herencia de la clase figura
+    def __init__(self, radio):
+        super().__init__("Círculo")
+        self.__radio = radio# Encapsulado
+
+    def calcular_area(self):
+        return math.pi * (self.__radio ** 2)
+
+    def calcular_perimetro(self):
+        return 2 * math.pi * self.__radio
+
+# Menú principal
+def menu():
+    while True:
+        print("\n=== CALCULADORA DE ÁREA Y PERÍMETRO ===")
+        print("1. Cuadrado")
+        print("2. Rectángulo")
+        print("3. Triángulo")
+        print("4. Círculo")
+        print("5. Salir")
+        opcion = input("Selecciona una opción: ")
+
+        if opcion == "1":
+            lado = float(input("Lado del CUADRADO: "))
+            figura = Cuadrado(lado)
+
+        elif opcion == "2":
+            base = float(input("Base del RECTÁNGULO: "))
+            altura = float(input("Altura del RECTÁNGULO: "))
+            figura = Rectangulo(base, altura)
+
+        elif opcion == "3":
+            base = float(input("Base del TRIÁNGULO: "))
+            altura = float(input("Altura del TRIÁNGULO: "))
+            figura = Triangulo(base, altura)
+
+        elif opcion == "4":
+            radio = float(input("Radio del CÍRCULO: "))
+            figura = Circulo(radio)
+
+        elif opcion == "5":
+            print("¡Gracias por usar la calculadora!")
+            break
+
+        else:
+            print("Opción inválida. Intenta de nuevo.")
+            continue
+
+        # Mostrar resultados
+        figura.mostrar_info()
+        print(f"Área: {figura.calcular_area():.2f}")
+        print(f"Perímetro: {figura.calcular_perimetro():.2f}")
+        del figura  # Llamar al destructor
+
+# Ejecutar el programa
+menu()

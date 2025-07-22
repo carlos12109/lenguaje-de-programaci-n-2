@@ -1,0 +1,271 @@
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import math
+
+# -------- CLASE BASE FIGURA --------
+class Figura:
+    def __init__(self, tipo):
+        self._tipo = tipo
+
+    def mostrar_info(self):
+        return f"FIGURA ELEGIDA: {self._tipo}"
+
+# -------- FIGURAS ESPECÍFICAS --------
+class Cuadrado(Figura):
+    def __init__(self, lado):
+        super().__init__("Cuadrado")
+        self._lado = lado
+
+    def calcular_area(self):
+        return self._lado ** 2
+
+    def calcular_perimetro(self):
+        return 4 * self._lado
+
+    def dibujar(self, canvas):
+        canvas.delete("all")
+        lado = 100
+        canvas.create_rectangle(50, 50, 50 + lado, 50 + lado, fill="lightblue", outline="black")
+
+class Rectangulo(Figura):
+    def __init__(self, base, altura):
+        super().__init__("Rectángulo")
+        self._base = base
+        self._altura = altura
+
+    def calcular_area(self):
+        return self._base * self._altura
+
+    def calcular_perimetro(self):
+        return 2 * (self._base + self._altura)
+
+    def dibujar(self, canvas):
+        canvas.delete("all")
+        canvas.create_rectangle(50, 50, 50 + 150, 50 + 100, fill="orange", outline="black")
+
+class Triangulo(Figura):
+    def __init__(self, base, altura):
+        super().__init__("Triángulo")
+        self._base = base
+        self._altura = altura
+
+    def calcular_area(self):
+        return (self._base * self._altura) / 2
+
+    def calcular_perimetro(self):
+        lado = math.sqrt((self._base / 2) ** 2 + self._altura ** 2)
+        return self._base + 2 * lado
+
+    def dibujar(self, canvas):
+        canvas.delete("all")
+        canvas.create_polygon(50, 150, 200, 150, 125, 50, fill="lightgreen", outline="black")
+
+class Circulo(Figura):
+    def __init__(self, radio):
+        super().__init__("Círculo")
+        self._radio = radio
+
+    def calcular_area(self):
+        return math.pi * (self._radio ** 2)
+
+    def calcular_perimetro(self):
+        return 2 * math.pi * self._radio
+
+    def dibujar(self, canvas):
+        canvas.delete("all")
+        canvas.create_oval(50, 50, 150, 150, fill="pink", outline="black")
+
+# -------- APLICACIÓN PRINCIPAL --------
+class CalculadoraApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Calculadora de Área y Perímetro")
+        self.root.geometry("800x500")
+        self.root.configure(bg="#ECECEC")
+
+        # Panel superior (menú principal)
+        self.frame_menu_principal = tk.Frame(root, bg="#2C3E50", height=50)
+        self.frame_menu_principal.pack(side="top", fill="x")
+        
+        # Crear frames separados para cada botón del menú principal
+        frame_menu = tk.Frame(self.frame_menu_principal, bg="#2C3E50")
+        frame_menu.pack(side="left", padx=10, pady=5)
+        
+        frame_ayuda = tk.Frame(self.frame_menu_principal, bg="#2C3E50")
+        frame_ayuda.pack(side="left", padx=10, pady=5)
+        
+        frame_teoria = tk.Frame(self.frame_menu_principal, bg="#2C3E50")
+        frame_teoria.pack(side="left", padx=10, pady=5)
+        
+        frame_acerca = tk.Frame(self.frame_menu_principal, bg="#2C3E50")
+        frame_acerca.pack(side="left", padx=10, pady=5)
+        
+        frame_salir = tk.Frame(self.frame_menu_principal, bg="#2C3E50")
+        frame_salir.pack(side="right", padx=10, pady=5)
+        
+        # Botones del menú principal en frames separados
+        self.crear_boton_menu("MENU PRINCIPAL", lambda: None, frame_menu)
+        self.crear_boton_menu("AYUDA", self.mostrar_ayuda, frame_ayuda)
+        self.crear_boton_menu("TEORIA", self.mostrar_teoria, frame_teoria) 
+        self.crear_boton_menu("ACERCA DE", self.mostrar_acerca, frame_acerca)
+        self.crear_boton_menu("SALIR", self.root.quit, frame_salir)
+
+        # Etiqueta "Elige una opción"
+        self.frame_seleccion = tk.Frame(root, bg="#ECF0F1")
+        self.frame_seleccion.pack(fill="x", padx=20, pady=10)
+        tk.Label(self.frame_seleccion, text="elige una opcion:", 
+                font=("Arial", 12), bg="#ECF0F1").pack()
+
+        # Panel de opciones de figuras
+        self.frame_figuras = tk.Frame(root, bg="#ECF0F1")
+        self.frame_figuras.pack(fill="x", padx=20, pady=5)
+        
+        # Crear frame para cada botón de figura para mejor separación visual
+        frame_cuadrado = tk.Frame(self.frame_figuras, bg="#ECF0F1", bd=2, relief=tk.RAISED)
+        frame_cuadrado.pack(side="left", padx=10, pady=5)
+        
+        frame_rectangulo = tk.Frame(self.frame_figuras, bg="#ECF0F1", bd=2, relief=tk.RAISED)
+        frame_rectangulo.pack(side="left", padx=10, pady=5)
+        
+        frame_triangulo = tk.Frame(self.frame_figuras, bg="#ECF0F1", bd=2, relief=tk.RAISED)
+        frame_triangulo.pack(side="left", padx=10, pady=5)
+        
+        frame_circulo = tk.Frame(self.frame_figuras, bg="#ECF0F1", bd=2, relief=tk.RAISED)
+        frame_circulo.pack(side="left", padx=10, pady=5)
+        
+        # Botones de figuras en frames separados
+        self.crear_boton_figura_frame("cuadrado", self.cuadrado_ui, frame_cuadrado)
+        self.crear_boton_figura_frame("rectangulo", self.rectangulo_ui, frame_rectangulo)
+        self.crear_boton_figura_frame("triangulo", self.triangulo_ui, frame_triangulo)
+        self.crear_boton_figura_frame("circulo", self.circulo_ui, frame_circulo)
+        
+        # Etiqueta "resultado:"
+        self.frame_resultado_label = tk.Frame(root, bg="#ECF0F1")
+        self.frame_resultado_label.pack(fill="x", padx=20, pady=10)
+        tk.Label(self.frame_resultado_label, text="resultado:", 
+                font=("Arial", 12), bg="#ECF0F1").pack(anchor="w")
+
+        # Panel de resultados
+        self.frame_resultado = tk.Frame(root, bg="#FFFFFF", bd=1, relief="solid")
+        self.frame_resultado.pack(fill="both", expand=True, padx=20, pady=5, ipady=10)
+
+        # Área de dibujo
+        self.canvas = tk.Canvas(self.frame_resultado, width=300, height=200, bg="#FFFFFF")
+        self.canvas.pack(pady=10)
+
+    def crear_boton_menu(self, texto, comando, frame):
+        tk.Button(frame, text=texto, command=comando, bg="#34495E", fg="white",
+                  font=("Arial", 10), relief="flat", width=15).pack(side="left", padx=10, pady=10)
+
+    def crear_boton_figura_frame(self, texto, comando, frame):
+        tk.Button(frame, text=texto, command=comando, bg="#FFFFFF", fg="black",
+                  font=("Arial", 10), relief="solid", width=15, height=2).pack(padx=5, pady=5)
+
+    def limpiar_contenido(self):
+        for widget in self.frame_resultado.winfo_children():
+            widget.destroy()
+
+    def mostrar_resultado(self, figura):
+        self.limpiar_contenido()
+        
+        # Canvas para dibujo
+        self.canvas = tk.Canvas(self.frame_resultado, width=300, height=200, bg="#FFFFFF")
+        self.canvas.pack(pady=10)
+        figura.dibujar(self.canvas)
+
+        # Mostrar información y resultados
+        tk.Label(self.frame_resultado, text=figura.mostrar_info(), font=("Arial", 14),
+                 bg="#FFFFFF", fg="#2C3E50").pack()
+        tk.Label(self.frame_resultado, text=f"Área: {figura.calcular_area():.2f}", font=("Arial", 12),
+                 bg="#FFFFFF", fg="#27AE60").pack()
+        tk.Label(self.frame_resultado, text=f"Perímetro: {figura.calcular_perimetro():.2f}", font=("Arial", 12),
+                 bg="#FFFFFF", fg="#2980B9").pack()
+
+    def entrada_figura(self, etiqueta, crear_figura):
+        self.limpiar_contenido()
+        tk.Label(self.frame_resultado, text=etiqueta, font=("Arial", 12), bg="#FFFFFF").pack(pady=5)
+        entrada = ttk.Entry(self.frame_resultado)
+        entrada.pack()
+
+        def calcular():
+            try:
+                figura = crear_figura(float(entrada.get()))
+                self.mostrar_resultado(figura)
+            except ValueError:
+                self.mostrar_error("Por favor ingresa un número válido.")
+
+        ttk.Button(self.frame_resultado, text="Calcular", command=calcular).pack(pady=10)
+
+    def entrada_doble(self, etq1, etq2, crear_figura):
+        self.limpiar_contenido()
+        tk.Label(self.frame_resultado, text=etq1, font=("Arial", 12), bg="#FFFFFF").pack(pady=5)
+        entrada1 = ttk.Entry(self.frame_resultado)
+        entrada1.pack()
+
+        tk.Label(self.frame_resultado, text=etq2, font=("Arial", 12), bg="#FFFFFF").pack(pady=5)
+        entrada2 = ttk.Entry(self.frame_resultado)
+        entrada2.pack()
+
+        def calcular():
+            try:
+                figura = crear_figura(float(entrada1.get()), float(entrada2.get()))
+                self.mostrar_resultado(figura)
+            except ValueError:
+                self.mostrar_error("Por favor ingresa números válidos.")
+
+        ttk.Button(self.frame_resultado, text="Calcular", command=calcular).pack(pady=10)
+
+    def mostrar_error(self, mensaje):
+        tk.Label(self.frame_resultado, text=mensaje, fg="red", bg="#FFFFFF", font=("Arial", 10)).pack(pady=5)
+
+    def cuadrado_ui(self):
+        self.entrada_figura("Lado del Cuadrado:", lambda val: Cuadrado(val))
+
+    def rectangulo_ui(self):
+        self.entrada_doble("Base:", "Altura:", lambda b, h: Rectangulo(b, h))
+
+    def triangulo_ui(self):
+        self.entrada_doble("Base:", "Altura:", lambda b, h: Triangulo(b, h))
+
+    def circulo_ui(self):
+        self.entrada_figura("Radio del Círculo:", lambda val: Circulo(val))
+
+    def mostrar_teoria(self):
+        self.limpiar_contenido()
+        teoria = """
+El perímetro y el área son dos elementos fundamentales en matemáticas.
+Para ayudarte a cuantificar el espacio físico y también para proveer las bases de matemáticas más avanzadas
+como en el álgebra, trigonometría, y cálculo. El perímetro es una medida de la distancia alrededor
+de una figura y el área nos da una idea de qué tanta superficie cubre dicha figura.
+
+El conocimiento del área y el perímetro lo aplican muchas personas día con día,
+como los arquitectos, ingenieros, y diseñadores gráficos, y es muy útil también para la gente en general.
+Entender cuánto espacio tienes y aprender cómo conjuntar figuras te ayudará cuando pintas tu cuarto,
+compras una casa, remodelas la cocina, o construyes un escritorio."""
+        tk.Label(self.frame_resultado, text=teoria, font=("Arial", 12), bg="#FFFFFF", justify="left").pack(padx=10, pady=10)
+
+    def mostrar_ayuda(self):
+        self.limpiar_contenido()
+        tk.Label(self.frame_resultado, text="Selecciona una figura y proporciona las medidas.",
+                 font=("Arial", 12), bg="#FFFFFF").pack(pady=10)
+        try:
+            img = Image.open("VDM.jpg")
+            img = img.resize((450, 400))
+            photo = ImageTk.PhotoImage(img)
+            etiqueta_img = tk.Label(self.frame_resultado, image=photo, bg="#FFFFFF")
+            etiqueta_img.image = photo  # Previene recolección de basura
+            etiqueta_img.pack()
+        except FileNotFoundError:
+            tk.Label(self.frame_resultado, text="Imagen no encontrada: ayuda.png", bg="#FFFFFF", fg="red").pack()
+
+    def mostrar_acerca(self):
+        self.limpiar_contenido()
+        texto = "Calculadora de Área y Perímetro\nVersión 1.0\nAutor: Vidman Ruis Roque Mamani"
+        tk.Label(self.frame_resultado, text=texto, font=("Arial", 12), bg="#FFFFFF", justify="center").pack(padx=10, pady=20)
+
+# -------- INICIAR APLICACIÓN --------
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = CalculadoraApp(root)
+    root.mainloop()
